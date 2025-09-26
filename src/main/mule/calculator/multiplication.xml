@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="multiplication" doc:id="17a2e77f-1085-4381-9ee6-74bff58612a4" >
+		<logger level="DEBUG" doc:name="START: multiplication flow" doc:id="59516580-ec8d-4060-b7d3-f4cd5d2a3397" message='#[output application/json&#10;---&#10;{&#10;	"message": "START: multiplication flow",&#10;	"payload": payload&#10;}]' />
+		<http:request method="GET" doc:name="GET: multiply" doc:id="971a8fc1-464a-4185-9953-d95b676f828d" config-ref="calculator_api_request_configuration" path="${api.calculator.operation.multiply}" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"firstNumber" : payload.firstNumber,
+	"secondNumber" : payload.secondNumber
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="transform result" doc:id="93e0a88a-754c-4d7c-bd55-8438591521ee" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.result
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="DEBUG" doc:name="END: multiplication flow" doc:id="8722eaff-aa1a-45aa-a1ab-931e8cbbc4eb" message='#[output application/json&#10;---&#10;{&#10;	"message": "END: multiplication flow",&#10;	"payload": payload&#10;}]' />
+	</flow>
+	<flow name="multiplication-with-validation" doc:id="533f6c1a-076d-4029-ac1e-51542415e157" >
+		<logger level="DEBUG" doc:name="START: multiplication flow" doc:id="38ef7188-1a44-4c45-8f65-73e5a373f0ec" message='#[output application/json&#10;---&#10;{&#10;	"message": "START: multiplication flow",&#10;	"payload": payload&#10;}]' />
+		<http:request method="GET" doc:name="GET: multiply" doc:id="9687fde1-bd84-4ce8-a4fd-61b1039d73c6" config-ref="calculator_api_request_configuration" path="${api.calculator.operation.multiply}" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"firstNumber" : payload.firstNumber,
+	"secondNumber" : payload.secondNumber
+}]]]></http:uri-params>
+		</http:request>
+		<choice doc:name="Choice" doc:id="a76017ef-89cb-477c-84e9-d3f265a87b59" >
+			<when expression="#[payload.success]" >
+				<ee:transform doc:name="transform result" doc:id="7464dda9-2293-48e5-9e47-1dbf5e77bbc2" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.result
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="DEBUG" doc:name="Error log" doc:id="723d2169-244d-4755-8427-651d1dac2332" message='#[output application/json&#10;---&#10;{&#10;	"message": "Error processing sum request",&#10;	"payload": payload&#10;}]' />
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"result": 0&#10;}]' doc:name="Set Payload" doc:id="a3706c79-dc7a-4325-a8c0-d1621549fe40" />
+			</otherwise>
+		</choice>
+		<logger level="DEBUG" doc:name="END: multiplication flow" doc:id="1de73b9c-62a3-4bea-82af-b7f435b2fdc3" message='#[output application/json&#10;---&#10;{&#10;	"message": "END: multiplication flow",&#10;	"payload": payload&#10;}]' />
+	</flow>
+	<flow name="multiplication-with-error" doc:id="0c7b1c17-1206-4f56-9a44-49235024a301" >
+		<logger level="DEBUG" doc:name="START: multiplication flow" doc:id="cc9d0e48-68c8-4034-bba9-feea45264a3e" message='#[output application/json&#10;---&#10;{&#10;	"message": "START: multiplication flow",&#10;	"payload": payload&#10;}]' />
+		<http:request method="GET" doc:name="GET: multiply" doc:id="bef75570-886f-4a53-93c2-6a8c549e9dd7" config-ref="calculator_api_request_configuration" path="${api.calculator.operation.multiply}" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"firstNumber" : payload.firstNumber,
+	"secondNumber" : payload.secondNumber
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="transform result" doc:id="75be9ebd-a164-4ddd-a0c8-8c08e657407b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.result
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="DEBUG" doc:name="END: multiplication flow" doc:id="2fc859e5-69d2-4bb9-8eab-ccaadabd977e" message='#[output application/json&#10;---&#10;{&#10;	"message": "END: multiplication flow",&#10;	"payload": payload&#10;}]' />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9c1953e0-0050-483f-95c6-59b6927c6d89" >
+				<logger level="DEBUG" doc:name="Error log" doc:id="b35f78c8-560b-423e-b466-2d45be93d8ab" message='#[output application/json&#10;---&#10;{&#10;	"message": "Error processing sum request",&#10;	"payload": payload&#10;}]' />
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"result": 0&#10;}]' doc:name="Set Payload" doc:id="9eadebea-15d5-4c1d-8eb3-ea1a1622c838" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

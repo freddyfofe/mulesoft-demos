@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<http:request-config name="calculator_api_request_configuration" doc:name="calculator_api_request_configuration" doc:id="87292165-f987-4f80-8a4e-fa121fcc987e" basePath="${api.calculator.basepath}" >
+		<http:request-connection host="${api.calculator.host}" port="${api.calculator.port}" />
+	</http:request-config>
+	<configuration-properties doc:name="default_properties" doc:id="1a3f6775-85db-45f0-bdfc-d208783f4a3e" file="properties\default.yaml" />
+	<configuration-properties doc:name="environment_properties" doc:id="7744f760-b69d-41ea-b85e-cf35176f891e" file="properties\\${env}.yaml" />
+	<secure-properties:config name="default_secure_properties" doc:name="Secure Properties Config" doc:id="cc38ef1c-8c60-43bd-8e46-cd31acce5a07" file="secure\default.yaml" key="${mulesoft.key}" />
+	<secure-properties:config name="environment_secure_properties" doc:name="Secure Properties Config" doc:id="ab3cde34-af72-43d7-94bb-75f2777a0f32" file="secure\\${env}.yaml" key="${mulesoft.key}" />
+</mule>

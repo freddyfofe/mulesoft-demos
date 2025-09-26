@@ -1,0 +1,6 @@
+api:
+  calculator:
+    host: localhost
+    port: "3000"
+    basepath: /calculator/api
+    

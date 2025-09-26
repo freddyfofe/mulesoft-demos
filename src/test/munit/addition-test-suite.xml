@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="addition-test-suite.xml" />
+	<munit:test name="addition-should-add-numbers-successfully" doc:id="8de4f08c-ba93-4210-a6c0-7d6c5e1a9b49" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when GET: sum" doc:id="4237a9d3-d8c7-46b1-8779-d6911c0a928d" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="calculator_api_request_configuration" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			<munit-tools:then-return>
+				<munit-tools:payload value="#[output application/json --- readUrl('classpath://calculator/addition/mock-get-sum-response-success.json')]" mediaType="application/json" encoding="UTF-8" />
+			</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="79bf8c0e-63b6-47a9-b849-fa131d5fbb0a" >
+				<munit:payload value="#[readUrl('classpath://calculator/addition/get-addition-request-success.json')]" encoding="UTF-8" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="addition" doc:id="de6d9fb5-7f72-4fd5-90a6-f256e2c672ff" name="addition"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="63c95605-6ee0-47dc-8e5b-23529880f758" actual="#[payload]" expected="#[readUrl('classpath://calculator/addition/get-addition-response-success.json')]"/>
+			<munit-tools:verify-call doc:name="Verify call" doc:id="44bb06af-efbc-49b2-8de4-0de7064b9ad3" processor="logger">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="END: addition flow" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="addition-validation-should-add-numbers-when-success-response" doc:id="4d3aad4a-7b66-4c0f-8b64-eedb0d4aa178" description="Test" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when GET: sum" doc:id="47142181-a9b9-48ec-b83d-fae36af6fdd9" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="calculator_api_request_configuration" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://calculator/addition/mock-get-sum-response-success.json')]" mediaType="application/json" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="2872f2c1-0d8d-4aac-b6aa-a32e71850446" >
+				<munit:payload value="#[readUrl('classpath://calculator/addition/get-addition-with-validation-request-success.json')]" encoding="UTF-8" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="addition-with-validation" doc:id="2960436a-9989-4578-8ca7-47cf89ef70a8" name="addition-with-validation" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="8d54ef6c-c216-4283-a7f4-da2df9806794" actual="#[payload]" expected="#[readUrl('classpath://calculator/addition/get-addition-response-success.json')]" />
+			<munit-tools:verify-call doc:name="Verify call" doc:id="aa86307b-e56e-4a57-8edd-68bbe8e54e3d" processor="logger" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="END: addition flow" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="addition-validation-should-not-add-numbers-when-fail-response" doc:id="4d1079b1-ca3f-46c9-b764-98b50dd3c5ce" description="Test" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when GET: sum" doc:id="c91ec1ac-7f5f-44c0-93e0-fe2cad1a1f3e" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="calculator_api_request_configuration" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://calculator/addition/mock-get-sum-response-fail.json')]" mediaType="application/json" encoding="UTF-8" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="78bc221f-e492-43ce-81bd-325495681c47" >
+				<munit:payload value="#[readUrl('classpath://calculator/addition/get-addition-with-validation-request-success.json')]" encoding="UTF-8" mediaType="application/json" />
+
+			</munit:set-event>
+			<flow-ref doc:name="addition-with-validation" doc:id="6b5c4180-bc92-494a-8fa1-f75f7610e2b0" name="addition-with-validation" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="1e7db31a-aee5-4b9b-803b-9244871c2dd6" actual="#[payload]" expected="#[readUrl('classpath://calculator/addition/get-addition-with-validation-response-fail.json')]" />
+			<munit-tools:verify-call doc:name="Verify call" doc:id="14def076-de9a-450f-81e3-8cfcd4fb5fd9" processor="logger" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="END: addition flow" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="addition-error-should-add-numbers-successfuly" doc:id="14dfef98-c9c6-4217-9ec4-7a3e65fa3c1b" description="Test" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when GET: sum" doc:id="00d3cdbd-d91b-496f-b059-e1741bad0a82" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="calculator_api_request_configuration" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://calculator/addition/mock-get-sum-response-success.json')]" mediaType="application/json" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="a8a7630a-b8f2-432f-bfd3-219103278659" >
+				<munit:payload value="#[readUrl('classpath://calculator/addition/get-addition-request-success.json')]" encoding="UTF-8" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="addition-with-errror" doc:id="78067699-829e-45da-8a9b-15f0be79f824" name="addition-with-error" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="ac99138a-24bc-40e5-8d99-1475d523bc17" actual="#[payload]" expected="#[readUrl('classpath://calculator/addition/get-addition-response-success.json')]" />
+			<munit-tools:verify-call doc:name="Verify call" doc:id="f63bb790-e0ba-46f8-befe-1b3f6d747a10" processor="logger" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="END: addition flow" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="addition-error-should-not-add-numbers-when-fail-response" doc:id="c748034d-3645-4dd1-91b3-1fc23510d19b" description="Test" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when GET: sum" doc:id="2f97176e-95ee-4bae-9857-e69d6dd92028" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="calculator_api_request_configuration" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://calculator/addition/mock-get-sum-response-success.json')]" encoding="UTF-8" />
+					<munit-tools:error typeId="HTTP:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="e3c3ab83-38c5-4124-a0b5-c7e51fc3e5ed" >
+				<munit:payload value="#[readUrl('classpath://calculator/addition/get-addition-request-success.json')]" encoding="UTF-8" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="addition-with-errror" doc:id="06aca851-a73a-47af-8020-1052385ec86f" name="addition-with-error" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="a074b247-1ee7-45f2-af01-d83972c70b9c" actual="#[payload]" expected="#[readUrl('classpath://calculator/addition/get-addition-with-validation-response-fail.json')]" />
+			<munit-tools:verify-call doc:name="Verify call" doc:id="6825dba5-49d9-4699-a0ab-046c8df39d2b" processor="logger">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a07d2a55-29f9-4c91-8950-13cf0403bd17" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

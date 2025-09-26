@@ -1,0 +1,5 @@
+api:
+  calculator:
+    operation:
+      sum: /sum/{firstNumber}/{secondNumber}
+      multiply: /multiplication/{firstNumber}/{secondNumber}

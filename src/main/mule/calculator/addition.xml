@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fb76f5e5-a412-42d5-81b9-e17d652ef9c3" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="addition" doc:id="fbe018ce-bcbc-4a12-8ea2-2a0986d38221" >
+		<logger level="DEBUG" doc:name="START: addition flow" doc:id="855a0d14-8d39-4961-817f-28ab88d00cc5" message='#[output application/json&#10;---&#10;{&#10;	"message": "START: addition flow",&#10;	"payload": payload&#10;}]'/>
+		<http:request method="GET" doc:name="GET: sum" doc:id="7176aedc-a182-4f52-973f-602cb48c8619" config-ref="calculator_api_request_configuration" path="${api.calculator.operation.sum}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"firstNumber" : payload.firstNumber,
+	"secondNumber" : payload.secondNumber
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="transform result" doc:id="3f192e48-6876-4acb-9f34-8782e5c05ee3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.result
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="DEBUG" doc:name="END: addition flow" doc:id="37a024a6-e5b9-4fc3-ab0d-bd24932bf41e" message='#[output application/json&#10;---&#10;{&#10;	"message": "END: addition flow",&#10;	"payload": payload&#10;}]' />
+	</flow>
+	<flow name="addition-with-validation" doc:id="f0c6912b-927a-4a5c-97f9-3ee1b4e59eaa" >
+		<logger level="DEBUG" doc:name="START: addition flow" doc:id="cf748396-4972-413a-8aed-68fcac34d866" message='#[output application/json&#10;---&#10;{&#10;	"message": "START: addition flow",&#10;	"payload": payload&#10;}]' />
+		<http:request method="GET" doc:name="GET: sum" doc:id="d6c1f553-fd6d-407e-929c-c8509d86be26" config-ref="calculator_api_request_configuration" path="${api.calculator.operation.sum}">
+			<http:uri-params><![CDATA[#[output application/java
+---
+{
+	"firstNumber" : payload.firstNumber,
+	"secondNumber" : payload.secondNumber
+}]]]></http:uri-params>
+		</http:request>
+		<choice doc:name="Choice" doc:id="15a04fa2-7385-4253-85d3-62e2dad09a26" >
+			<when expression="#[payload.success]">
+				<ee:transform doc:name="transform result" doc:id="55045df8-8de8-46fb-aad5-efcab61972df">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.result
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="DEBUG" doc:name="Error log" doc:id="2c4e49e5-e905-470d-998e-4988c54c9452" message='#[output application/json&#10;---&#10;{&#10;	"message": "Error processing sum request",&#10;	"payload": payload&#10;}]' />
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"result": 0&#10;}]' doc:name="Set Payload" doc:id="4367ec11-5714-41a6-9168-412b704e2874" />
+			</otherwise>
+		</choice>
+		<logger level="DEBUG" doc:name="END: addition flow" doc:id="72b3371a-1f17-4036-934a-294277a9f720" message='#[output application/json&#10;---&#10;{&#10;	"message": "END: addition flow",&#10;	"payload": payload&#10;}]' />
+	</flow>
+	<flow name="addition-with-error" doc:id="bf74fe20-931f-446a-a0a1-26663fdd24ff" >
+		<logger level="DEBUG" doc:name="START: addition flow" doc:id="a4c9eb26-b991-4cfa-9f46-98ba99939d3c" message='#[output application/json&#10;---&#10;{&#10;	"message": "START: addition flow",&#10;	"payload": payload&#10;}]' />
+		<http:request method="GET" doc:name="GET: sum" doc:id="5cfab803-143a-49a7-b6ba-1358450ad9e5" config-ref="calculator_api_request_configuration" path="${api.calculator.operation.sum}">
+			<http:uri-params><![CDATA[#[output application/java
+---
+{
+	"firstNumber" : payload.firstNumber,
+	"secondNumber" : payload.secondNumber
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="transform result" doc:id="6c3994ec-1cf3-4b8a-acdd-2bb490bc607d">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.result
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+		<logger level="DEBUG" doc:name="END: addition flow" doc:id="91a8efca-8f67-4a7b-870d-b3922faded92" message='#[output application/json&#10;---&#10;{&#10;	"message": "END: addition flow",&#10;	"payload": payload&#10;}]' />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b3f3e6c6-b6ea-456b-9ba5-4b453d7617b9" >
+				<logger level="DEBUG" doc:name="Error log" doc:id="a07d2a55-29f9-4c91-8950-13cf0403bd17" message='#[output application/json&#10;---&#10;{&#10;	"message": "Error processing sum request",&#10;	"payload": payload&#10;}]' />
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"result": 0&#10;}]' doc:name="Set Payload" doc:id="d039f3f0-8a96-415a-bfdc-0f29c5fa42d3" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>
