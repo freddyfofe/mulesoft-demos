@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 	<flow name="multiplication" doc:id="17a2e77f-1085-4381-9ee6-74bff58612a4" >
 		<logger level="DEBUG" doc:name="START: multiplication flow" doc:id="59516580-ec8d-4060-b7d3-f4cd5d2a3397" message='#[output application/json&#10;---&#10;{&#10;	"message": "START: multiplication flow",&#10;	"payload": payload&#10;}]' />
 		<http:request method="GET" doc:name="GET: multiply" doc:id="971a8fc1-464a-4185-9953-d95b676f828d" config-ref="calculator_api_request_configuration" path="${api.calculator.operation.multiply}" >
@@ -48,8 +49,31 @@ output application/json
 	"result": payload.result
 }]]></ee:set-payload>
 					</ee:message>
-				</ee:transform>
-			</when>
+					<ee:variables >
+						<ee:set-variable variableName="result" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.result
+}]]></ee:set-variable>
+					</ee:variables>
+				
+</ee:transform>
+				<db:insert doc:id="631b6231-00f6-4ac2-a652-db999fdbb0cd" config-ref="postgresql_configuration">
+			<db:sql><![CDATA[INSERT into log (
+	result
+)
+VALUES (
+	:result
+)
+]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	result: payload.result
+}]]]></db:input-parameters>
+		</db:insert>
+				<set-payload value="#[vars.result]" doc:name="Set Payload" doc:id="39b5e09b-0cae-4b1b-ab52-0c1f339b001e" />
+			
+</when>
 			<otherwise >
 				<logger level="DEBUG" doc:name="Error log" doc:id="723d2169-244d-4755-8427-651d1dac2332" message='#[output application/json&#10;---&#10;{&#10;	"message": "Error processing sum request",&#10;	"payload": payload&#10;}]' />
 				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"result": 0&#10;}]' doc:name="Set Payload" doc:id="a3706c79-dc7a-4325-a8c0-d1621549fe40" />
