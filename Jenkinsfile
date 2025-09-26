@@ -12,8 +12,6 @@ pipeline {
                 
                 script {
                     withCredentials([string(credentialsId: 'mulesoft-key', variable: 'MULESOFT_KEY')]) {
-                        sh "echo 'The secret is: ${MULESOFT_KEY}'"
-                
 		                sh '''
 		                mvn -o clean package \
 		                  -Denv=local \
@@ -27,15 +25,10 @@ pipeline {
 
         stage("test") {
             steps {
-            
                 echo 'Testing the application...'
-                
                 
                 script {
                     withCredentials([string(credentialsId: 'mulesoft-key', variable: 'MULESOFT_KEY')]) {
-                        sh "echo 'The secret is: ${MULESOFT_KEY}'"
-                
-            
 		                sh '''
 		                mvn -o  clean test \
 		                  -Denv=local \
