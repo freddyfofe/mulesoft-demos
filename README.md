@@ -56,3 +56,4 @@ Before running the project with **jenkins**, make sure you have the following in
       - *Maven 3.9.11* installed and configured with the name: `maven-3.9.11`.
     - **Environment Variables**:  
       - A secret environment variable named **`mulesoft-key`** must be configured in Jenkins credentials or pipeline environment settings.
+
