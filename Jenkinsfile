@@ -10,12 +10,18 @@ pipeline {
             steps {
                 echo 'Building the application...'
                 
-                sh '''
-                mvn -o clean package \
-                  -Denv=local \
-                  -Dmulesoft.key=MyMockMulesofKey \
-                  -DskipTests
-                '''
+                script {
+                    withCredentials([string(credentialsId: 'mulesoft-key', variable: 'MULESOFT_KEY')]) {
+                        sh "echo 'The secret is: ${MULESOFT_KEY}'"
+                
+		                sh '''
+		                mvn -o clean package \
+		                  -Denv=local \
+		                  -Dmulesoft.key=${MULESOFT_KEY} \
+		                  -DskipTests
+		                '''
+                    }
+                }
             }
         }
 
@@ -23,12 +29,20 @@ pipeline {
             steps {
             
                 echo 'Testing the application...'
+                
+                
+                script {
+                    withCredentials([string(credentialsId: 'mulesoft-key', variable: 'MULESOFT_KEY')]) {
+                        sh "echo 'The secret is: ${MULESOFT_KEY}'"
+                
             
-                sh '''
-                mvn -o  clean test \
-                  -Denv=local \
-                  -Dmulesoft.key=MyMockMulesofKey
-                '''
+		                sh '''
+		                mvn -o  clean test \
+		                  -Denv=local \
+		                  -Dmulesoft.key=${MULESOFT_KEY}
+		                '''
+                    }
+                }
             }
             post {
                 always {
