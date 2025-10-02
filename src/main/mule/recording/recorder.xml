@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="munit-recording-flow" doc:id="140f16d9-fae5-4f9a-b91b-32b3bb741ffa" >
+		<http:listener doc:name="Listener" doc:id="3f1839ab-58aa-460e-83f2-4f0b41cc99df" path="/test" config-ref="http_listener_config"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="da3aed2c-870a-410b-8a0b-f255c3a5d052" />
+		<ee:transform doc:name="Transform Message" doc:id="f9b061e7-af5b-4bcf-b856-1814f78e6747" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	result: payload.firstNumber + payload.secondNumber
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="de0b17f0-a783-47b1-8e98-7c48d5844cbb" />
+	</flow>
+</mule>

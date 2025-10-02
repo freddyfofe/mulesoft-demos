@@ -16,4 +16,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 	<db:config name="postgresql_configuration" doc:name="Database Config" doc:id="5318e17a-3dd0-4172-a272-6460770c32b6" >
 		<db:generic-connection url="jdbc:postgresql://localhost:5432/postgres" driverClassName="org.postgresql.Driver" user="${secure::postgresql.username}" password="${secure::postgresql.pass}" />
 	</db:config>
+	<http:listener-config name="http_listener_config" doc:name="HTTP Listener config" doc:id="a91d1e44-1bb8-4646-bb91-a6286238fbf9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
 </mule>

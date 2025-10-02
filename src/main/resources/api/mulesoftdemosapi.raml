@@ -1,0 +1,16 @@
+#%RAML 1.0
+title: Simple Book Service
+version: v1
+
+/books:
+  get:
+    description: Retrieve a list of books
+    responses:
+      200:
+        body:
+          application/json:
+            example: {
+                  "id": 1,
+                  "title": "The Hobbit",
+                  "author": "J.R.R. Tolkien"
+                }

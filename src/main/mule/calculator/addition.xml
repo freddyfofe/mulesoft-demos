@@ -5,9 +5,6 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fb76f5e5-a412-42d5-81b9-e17d652ef9c3" >
-		<http:listener-connection host="0.0.0.0" port="8081" />
-	</http:listener-config>
 	<flow name="addition" doc:id="fbe018ce-bcbc-4a12-8ea2-2a0986d38221" >
 		<logger level="DEBUG" doc:name="START: addition flow" doc:id="855a0d14-8d39-4961-817f-28ab88d00cc5" message='#[output application/json&#10;---&#10;{&#10;	"message": "START: addition flow",&#10;	"payload": payload&#10;}]'/>
 		<http:request method="GET" doc:name="GET: sum" doc:id="7176aedc-a182-4f52-973f-602cb48c8619" config-ref="calculator_api_request_configuration" path="${api.calculator.operation.sum}">
